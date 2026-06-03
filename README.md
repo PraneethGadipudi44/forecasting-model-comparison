@@ -7,26 +7,28 @@ This project compares four time series forecasting models on the public NOAA Mau
 - SARIMA
 - Prophet
 
-The goal is to evaluate how different forecasting approaches perform on the same time series using a fair train/test split and a common set of evaluation metrics.
+The goal is to see how different forecasting approaches behave on the same time series using the same train/test split, the same evaluation metrics, and the same visual comparison framework.
 
 ## Dataset
 
-The analysis uses the NOAA Mauna Loa daily CO2 dataset, which is publicly available and well suited for forecasting because it includes:
+The project uses the NOAA Mauna Loa daily CO2 dataset, a strong choice for forecasting because it includes:
 
 - a long historical record
 - a clear upward trend
 - strong yearly seasonality
-- some irregular or invalid values that require preprocessing
+- some irregular or invalid values that need preprocessing
 
-Source:
+Source:  
 https://gml.noaa.gov/aftp/data/trace_gases/co2/in-situ/surface/txt/co2_mlo_surface-insitu_1_ccgg_DailyData.txt
 
-## What This Project Does
+## What the Script Does
+
+The script:
 
 - downloads or reuses the public NOAA dataset
-- cleans invalid daily readings
-- converts the series into monthly average CO2 values
-- splits the data chronologically into training and testing sets
+- removes invalid daily readings
+- converts the daily values into monthly average CO2 values
+- splits the series chronologically into training and test sets
 - trains four forecasting models
 - evaluates each model using:
   - MAE
@@ -34,51 +36,62 @@ https://gml.noaa.gov/aftp/data/trace_gases/co2/in-situ/surface/txt/co2_mlo_surfa
   - MAPE
   - R-squared
 - generates comparison plots
-- writes a summary report with findings and recommendations
+- writes a short markdown summary with findings and recommendations
 
 ## Project Files
 
-- `model_comparison.py` — main script for loading data, training models, evaluating results, and saving plots
-- `model_comparison_summary.md` — written summary of findings
-- `plots/forecast_grid.png` — forecast vs actual plot for each model
-- `plots/forecast_overlay.png` — all forecasts plotted against actual values
-- `plots/error_metrics.png` — metric comparison chart
-- `plots/residuals_boxplot.png` — residual comparison plot
+- `model_comparison.py` — main Python script
+- `model_comparison_summary.md` — summary of results and conclusions
+- `plots/forecast_grid.png` — forecast vs actual view for each model
+- `plots/forecast_overlay.png` — all model forecasts overlaid on the actual series
+- `plots/error_metrics.png` — comparison chart for key error metrics
+- `plots/residuals_boxplot.png` — residual spread comparison across models
 
 ## Models Compared
 
-### 1. Seasonal Naive
-A simple baseline that repeats the value from the same season in the previous year.
+### Seasonal Naive
+A simple baseline that repeats the value from the same month in the previous year.
 
-### 2. Holt-Winters
-A smoothing-based model that handles level, trend, and seasonality directly.
+### Holt-Winters Exponential Smoothing
+A smoothing model that captures level, trend, and seasonality directly.
 
-### 3. SARIMA
-A classical statistical forecasting model that captures autoregressive, moving average, and seasonal behavior.
+### SARIMA
+A classical time series model that handles autoregressive, differencing, moving average, and seasonal structure.
 
-### 4. Prophet
-A trend-and-seasonality forecasting model designed to work well on business and historical time series.
+### Prophet
+A forecasting model designed to model trend and seasonality in an interpretable way.
 
-## Evaluation Approach
+## Evaluation Strategy
 
-The data is split in time order so the last 36 months are used as the test set. This keeps the evaluation realistic and avoids data leakage.
+The time series is split in chronological order, with the last 36 months reserved for testing.
 
-Each model is trained only on the training data and then evaluated on the same test window.
+This means:
+
+- all models are trained only on earlier data
+- all forecasts are made on the same unseen test period
+- the comparison stays fair and realistic
+
+The evaluation metrics used in this project are:
+
+- MAE
+- RMSE
+- MAPE
+- R-squared
 
 ## Results Summary
 
-In this run:
+From the current run:
 
-- Holt-Winters achieved the best RMSE
-- Prophet was very close and had the lowest MAE and MAPE
-- SARIMA performed reasonably well but did not beat Holt-Winters
-- Seasonal Naive worked as a useful baseline but was the weakest overall
+- Holt-Winters produced the best RMSE
+- Prophet was very close and had the best MAE and MAPE
+- SARIMA performed reasonably well but did not outperform Holt-Winters
+- Seasonal Naive worked as a baseline but was clearly the weakest overall
 
-For the full write-up, see `model_comparison_summary.md`.
+For the full discussion, see `model_comparison_summary.md`.
 
-## How To Run
+## How to Run
 
-Install the required packages:
+Install dependencies:
 
 ```bash
 pip install pandas numpy matplotlib scikit-learn statsmodels prophet
